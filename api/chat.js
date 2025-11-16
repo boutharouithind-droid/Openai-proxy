@@ -1,11 +1,8 @@
-import express from "express";
-import cors from "cors";
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Only POST allowed" });
+  }
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.post("/chat", async (req, res) => {
   try {
     const message = req.body.message;
 
@@ -22,11 +19,10 @@ app.post("/chat", async (req, res) => {
     });
 
     const data = await openaiRes.json();
-    res.json(data);
+    return res.status(200).json(data);
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Fehler beim Proxy" });
+    return res.status(500).json({ error: "Serverfehler" });
   }
-});
-
-export default app;
+}
